@@ -1,0 +1,68 @@
+version: '3.9'
+services:
+#1.DB
+ database:
+  build:
+   context: .
+   dockerfile: mysql-Dockerfile
+  container_name: Mysqldb
+  environment:
+    MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+  secrets:
+    - db_root_password
+  restart: unless-stopped
+  volumes:
+   - /home/e5581833/with_docker-compose/db_data:/var/lib/mysql
+  ports:
+   - "3306:3306"
+#2.a Micro-services - Accounts
+ account-micro2:
+  build:
+   context: .
+   dockerfile: account-DockerFile
+  container_name: account_microservice
+  restart: unless-stopped
+  ports:
+   - "9081:9081"
+  volumes:
+   - /home/e5581833/with_docker-compose/account_logs:/app/logs/
+  networks:
+      - fnt_nwt
+      - bck_nwt
+#2.b Micro-services - Customer
+ customer-micro:
+  build:
+   context: .
+   dockerfile: customer-DockerFile
+  container_name: customer_microservice
+  restart: unless-stopped
+  ports:
+   - "9080:9080"
+  volumes:
+   - /home/e5581833/with_docker-compose/customer_logs:/app/logs/
+  networks:
+      - fnt_nwt
+      - bck_nwt
+#3.Frontnd
+ frontend_webserver:
+  build:
+   context: .
+   dockerfile: nginx-Dockerfile
+  container_name: frontend_webserver
+  restart: unless-stopped
+  ports:
+   - "80:80"
+  volumes:
+   - /home/e5581833/with_docker-compose/nginx_logs:/var/log/nginx/
+  networks:
+      - fnt_nwt
+secrets:
+    db_root_password:
+      file: db_root_password.txt
+networks:
+  fnt_nwt:
+    # Used for frontend
+  bck_nwt:
+    # Used for backend
+volumes:
+  db_data:

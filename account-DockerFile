@@ -1,0 +1,11 @@
+FROM maven:3.6.3-jdk-8 AS buildimg
+WORKDIR /build
+COPY Account-micro2 .
+RUN mvn clean install
+
+FROM openjdk:8-jre-alpine
+WORKDIR /app
+VOLUME /app/logs
+COPY --from=buildimg /build/target/Account-micro2-0.0.1-SNAPSHOT.jar .
+EXPOSE 9081
+ENTRYPOINT ["java", "-jar", "Account-micro2-0.0.1-SNAPSHOT.jar","--logging.file.name=/app/logs/Account-micro2-service.log"]

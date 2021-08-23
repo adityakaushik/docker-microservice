@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<h2>Customer Forms</h2>
+
+<form id="formElem" >
+  <label for="fname">First name:</label><br>
+  <input type="text" id="fname" name="fname" value=""><br>
+  <label for="lname">Cust Id</label><br>
+  <input type="text" id="lname" name="lname" value=""><br><br>
+  <input type="submit" value="Submit">
+</form> 
+
+<div id="decoded"></div>
+
+
+<h2>Account Forms</h2>
+
+<form id="formAcct" >
+  <label for="acctname">Account name:</label><br>
+  <input type="text" id="acctname" name="acctname" value=""><br>
+  <label for="acctid">Account Id</label><br>
+  <input type="text" id="acctid" name="acctid" value=""><br><br>
+  <input type="submit" value="Submit">
+</form> 
+
+<div id="decoded11"></div>
+
+
+
+</body>
+<script>
+
+    formElem.onsubmit = async (e) => {
+      e.preventDefault();
+      var form = document.querySelector("#formElem");
+     // var form = document.forms[0];
+
+        data = {
+          name : form.querySelector('input[name="fname"]').value,
+          custid : form.querySelector('input[name="lname"]').value,
+          
+        }
+
+        let response = await fetch('http://10.7.137.184:9080/adi/addCustomer', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+        })
+
+        let text = await response.text(); // read response body as text
+        document.querySelector("#decoded").innerHTML = text;
+    };
+	
+	formAcct.onsubmit = async (e) => {
+      e.preventDefault();
+      var form = document.querySelector("#formAcct");
+     // var form = document.forms[0];
+
+        data = {
+          account : form.querySelector('input[name="acctname"]').value,
+          acctid : form.querySelector('input[name="acctid"]').value,
+          
+        }
+
+        let response = await fetch('http://10.7.137.184:9081/adi/addAccount', {
+                method: 'POST', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+        })
+
+        let text = await response.text(); // read response body as text
+        document.querySelector("#decoded11").innerHTML = text;
+    };
+	
+</script>
+</html>
